@@ -1,0 +1,7 @@
+@import "tailwindcss";
+
+
+/* tailwind.config.js doesn't need changes, but you can define below in global.css if needed */
+.input {
+  @apply w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500;
+}
