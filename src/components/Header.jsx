@@ -3,13 +3,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useLogoutMutation } from '../features/login/loginApiSlice';
 
 const Header = () => {
-    const [logout] = useLogoutMutation();
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
 
+  const [logout] = useLogoutMutation();
+
   const handleLogout = async() => {
-    await logout() ;
-    
+    await logout().unwrap();
     localStorage.removeItem('token');
     navigate('/login');
   };
@@ -38,7 +38,7 @@ const Header = () => {
 
             {!token ? (
               <li>
-                <Link to="/login" className="hover:text-blue-400 transition duration-200">
+                <Link to="/login" className="hover:bg-blue-600 px-4 py-2 bg-blue-500 rounded-md transition duration-200">
                   Login
                 </Link>
               </li>
@@ -52,7 +52,7 @@ const Header = () => {
                 <li>
                   <button
                     onClick={handleLogout}
-                    className="bg-red-500 hover:bg-red-600 text-white px-4 py-1.5 rounded-md transition duration-200"
+                    className=" hover:bg-red-600 text-white px-4 py-2 bg-red-500 rounded-md transition duration-200"
                   >
                     Logout
                   </button>

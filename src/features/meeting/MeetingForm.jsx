@@ -22,25 +22,32 @@ const MeetingForm = () => {
 
   const [newPerson, setNewPerson] = useState('');
   const [errors, setErrors] = useState({});
-  const [createMeeting, { isLoading, isError, error, isSuccess }] = useCreateMeetingMutation();
+  const [createMeeting, { isLoading, isError, error }] = useCreateMeetingMutation();
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       [name]: type === 'checkbox' ? checked : value,
-    });
+    }));
   };
 
   const validateForm = () => {
+    const requiredFields = ['fullName', 'mobileNumber', 'state', 'homeDistrict', 'constituency', 'reason', 'occupation'];
     const newErrors = {};
-    if (!formData.fullName.trim()) newErrors.fullName = 'Full name is required';
-    if (!formData.mobileNumber.trim()) newErrors.mobileNumber = 'Mobile number is required';
-    if (!formData.state.trim()) newErrors.state = 'State is required';
-    if (!formData.homeDistrict.trim()) newErrors.homeDistrict = 'Home district is required';
-    if (!formData.constituency.trim()) newErrors.constituency = 'Constituency is required';
-    if (!formData.reason.trim()) newErrors.reason = 'Reason is required';
-    if (!formData.occupation.trim()) newErrors.occupation = 'Occupation is required';
+
+    requiredFields.forEach((field) => {
+      if (!formData[field].trim()) {
+        newErrors[field] = `${field.replace(/([A-Z])/g, ' $1')} is required`;
+      }
+    });
+
+    // Phone number validation (must be exactly 10 digits)
+    const phone = formData.mobileNumber.trim();
+    if (!/^\d{10}$/.test(phone)) {
+      newErrors.mobileNumber = 'Mobile number must be exactly 10 digits';
+    }
+
     return newErrors;
   };
 
@@ -55,21 +62,24 @@ const MeetingForm = () => {
   };
 
   const removePerson = (index) => {
-    const updated = formData.accompanyingPersons.filter((_, i) => i !== index);
-    setFormData({ ...formData, accompanyingPersons: updated });
+    setFormData((prev) => ({
+      ...prev,
+      accompanyingPersons: prev.accompanyingPersons.filter((_, i) => i !== index),
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formErrors = validateForm();
-    if (Object.keys(formErrors).length) {
+    if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
       return;
     }
+
     setErrors({});
     try {
       await createMeeting(formData).unwrap();
-      alert('Meeting request submitted successfully!');
+      alert('✅ Meeting request submitted successfully!');
       setFormData({
         fullName: '',
         mobileNumber: '',
@@ -93,69 +103,94 @@ const MeetingForm = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8 bg-white rounded-xl shadow-md mt-20">
+    <div className="max-w-3xl mx-auto px-4 py-8 bg-white rounded-xl shadow-md my-20">
       <h2 className="text-2xl font-bold mb-6 text-center text-indigo-600">Meeting Request Form</h2>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Input fields */}
+      {isError && (
+        <p className="text-red-600 text-center mb-4">
+          {error?.data?.message || '❌ Failed to submit request. Please try again.'}
+        </p>
+      )}
+
+      <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {['fullName', 'mobileNumber', 'state', 'homeDistrict', 'constituency'].map((field) => (
+          {['fullName', 'state', 'homeDistrict', 'constituency'].map((field) => (
             <div key={field}>
-              <label className="block font-medium mb-1 capitalize">
+              <label htmlFor={field} className="block font-medium mb-1 capitalize">
                 {field.replace(/([A-Z])/g, ' $1')}
               </label>
               <input
                 type="text"
+                id={field}
                 name={field}
                 value={formData[field]}
                 onChange={handleChange}
-                className="w-full border rounded px-3 py-2"
+                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
               />
               {errors[field] && <p className="text-red-500 text-sm mt-1">{errors[field]}</p>}
             </div>
           ))}
         </div>
 
-        {/* Reference */}
         <div>
-          <label className="block font-medium mb-1">Reference</label>
+          <label htmlFor="mobileNumber" className="block font-medium mb-1">Mobile Number</label>
           <input
             type="text"
+            id="mobileNumber"
+            name="mobileNumber"
+            value={formData.mobileNumber}
+            onChange={handleChange}
+            maxLength={10}
+            className="w-full border border-gray-300 rounded px-3 py-2"
+          />
+          {errors.mobileNumber && (
+            <p className="text-red-500 text-sm mt-1">{errors.mobileNumber}</p>
+          )}
+        </div>
+
+        <div>
+          <label htmlFor="reference" className="block font-medium mb-1">Reference</label>
+          <input
+            type="text"
+            id="reference"
             name="reference"
             value={formData.reference}
             onChange={handleChange}
-            className="w-full border rounded px-3 py-2"
+            className="w-full border border-gray-300 rounded px-3 py-2"
           />
         </div>
 
-        {/* Reason */}
         <div>
-          <label className="block font-medium mb-1">Reason</label>
+          <label htmlFor="reason" className="block font-medium mb-1">Reason</label>
           <textarea
+            id="reason"
             name="reason"
             value={formData.reason}
             onChange={handleChange}
-            className="w-full border rounded px-3 py-2"
             rows={3}
-          ></textarea>
-          {errors.reason && <p className="text-red-500 text-sm">{errors.reason}</p>}
+            className="w-full border border-gray-300 rounded px-3 py-2"
+          />
+          {errors.reason && (
+            <p className="text-red-500 text-sm">{errors.reason}</p>
+          )}
         </div>
 
-        {/* Occupation */}
         <div>
-          <label className="block font-medium mb-1">Occupation</label>
+          <label htmlFor="occupation" className="block font-medium mb-1">Occupation</label>
           <input
             type="text"
+            id="occupation"
             name="occupation"
             value={formData.occupation}
             onChange={handleChange}
-            className="w-full border rounded px-3 py-2"
+            className="w-full border border-gray-300 rounded px-3 py-2"
           />
-          {errors.occupation && <p className="text-red-500 text-sm">{errors.occupation}</p>}
+          {errors.occupation && (
+            <p className="text-red-500 text-sm">{errors.occupation}</p>
+          )}
         </div>
 
-        {/* Checkboxes */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           {[
             'metBefore',
             'politicalExperience',
@@ -176,7 +211,6 @@ const MeetingForm = () => {
           ))}
         </div>
 
-        {/* Accompanying Persons */}
         <div>
           <label className="block font-medium mb-2">Accompanying Persons</label>
           <div className="flex gap-2 mb-3">
@@ -185,23 +219,22 @@ const MeetingForm = () => {
               placeholder="Enter name"
               value={newPerson}
               onChange={(e) => setNewPerson(e.target.value)}
-              className="border px-3 py-2 rounded w-full"
+              className="border border-gray-300 px-3 py-2 rounded w-full"
             />
             <button
               type="button"
               onClick={addPerson}
-              className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
+              className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition"
             >
               Add
             </button>
           </div>
-
           {formData.accompanyingPersons.length > 0 && (
             <ul className="space-y-2">
               {formData.accompanyingPersons.map((person, index) => (
                 <li
                   key={index}
-                  className="flex items-center justify-between bg-gray-100 px-4 py-2 rounded"
+                  className="flex justify-between items-center bg-gray-100 px-4 py-2 rounded"
                 >
                   <span>{person}</span>
                   <button
@@ -217,23 +250,15 @@ const MeetingForm = () => {
           )}
         </div>
 
-        {/* Submit Button */}
         <button
           type="submit"
           disabled={isLoading}
-          className={`w-full py-2 rounded text-white font-semibold ${
+          className={`w-full py-2 rounded text-white font-semibold transition ${
             isLoading ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'
           }`}
         >
           {isLoading ? 'Submitting...' : 'Submit Request'}
         </button>
-
-        {/* Error Message */}
-        {isError && (
-          <p className="text-center text-red-600 text-sm mt-2">
-            {error?.data?.message || 'Failed to submit request'}
-          </p>
-        )}
       </form>
     </div>
   );

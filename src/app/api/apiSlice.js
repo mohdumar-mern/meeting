@@ -1,11 +1,11 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
 export const apiSlice = createApi({
-  reducerPath: 'api', // Optional: useful when you have multiple APIs
+  reducerPath: 'api', 
   baseQuery: fetchBaseQuery({
-    baseUrl: 'http://localhost:8080/api',
-    credentials: 'include', // This should be inside baseQuery options
+    baseUrl: import.meta.env.VITE_APP_URL ||  'http://localhost:8080/api',
+    credentials: 'include', 
   }),
-  tagTypes: ['Meeting'], // Tag for cache invalidation
-  endpoints: (builder) => ({}), // Keep empty for now, add endpoints later
+  tagTypes: ['Meeting'], 
+  endpoints: (builder) => ({}), 
 })

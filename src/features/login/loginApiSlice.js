@@ -1,24 +1,22 @@
-import { createSelector, createEntityAdapter } from "@reduxjs/toolkit";
-
+// features/auth/authApiSlice.js
 import { apiSlice } from "../../app/api/apiSlice";
 
+export const authApiSlice = apiSlice.injectEndpoints({
+  endpoints: (builder) => ({
+    login: builder.mutation({
+      query: (data) => ({
+        url: "/auth/login",
+        method: "POST",
+        body: data,
+      }),
+    }),
+    logout: builder.mutation({
+      query: () => ({
+        url: "/auth/logout",
+        method: "POST",
+      }),
+    }),
+  }),
+});
 
-const authApiSlice = apiSlice.injectEndpoints({
-    endpoints: (builder) => ({
-        login: builder.mutation({
-            query: (data) => ({
-                url: '/auth/login',
-                method: 'POST',
-                body: data
-            })
-        }),
-        logout: builder.mutation({
-            query: () => ({
-                url: '/auth/logout',
-                method: 'GET'
-            })
-        })
-    })
-})
-
-export const { useLoginMutation, useLogoutMutation } = authApiSlice
+export const { useLoginMutation, useLogoutMutation } = authApiSlice;

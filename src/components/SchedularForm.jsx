@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom'; // ✅ added useNavigate
+import { useParams, useNavigate } from 'react-router-dom';
 import { useUpdateMeetingMutation } from '../features/meeting/meetingApiSlice';
 
 const AdminScheduleForm = () => {
   const { id } = useParams();
-  const navigate = useNavigate(); // ✅ initialize navigate
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     isScheduled: false,
@@ -14,6 +14,7 @@ const AdminScheduleForm = () => {
   });
 
   const [updateMeeting, { isLoading: isUpdating }] = useUpdateMeetingMutation();
+  const [error, setError] = useState(null); // 🔴 UI error state
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -27,6 +28,7 @@ const AdminScheduleForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(null); // clear previous error
 
     try {
       const res = await updateMeeting({
@@ -35,10 +37,10 @@ const AdminScheduleForm = () => {
       }).unwrap();
 
       alert(res.message || 'Meeting updated successfully');
-      navigate('/dashboard'); // ✅ go to dashboard
-    } catch (error) {
-      console.error('Update error:', error);
-      alert('Failed to update meeting');
+      navigate('/dashboard');
+    } catch (err) {
+      console.error('Update error:', err);
+      setError(err?.data?.error || err?.data?.message || 'Failed to update meeting. Please try again.');
     }
   };
 
@@ -47,6 +49,15 @@ const AdminScheduleForm = () => {
       onSubmit={handleSubmit}
       className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md space-y-4 mt-20"
     >
+      <h2 className="text-xl font-semibold text-center text-gray-800">Update Meeting Schedule</h2>
+
+      {/*Error Message */}
+      {error && (
+        <div className="bg-red-100 text-red-700 p-3 rounded-md text-sm border border-red-300">
+          {error}
+        </div>
+      )}
+
       <div className="flex items-center space-x-2">
         <label htmlFor="isScheduled" className="text-gray-700 font-medium">
           Schedule Confirmed:
