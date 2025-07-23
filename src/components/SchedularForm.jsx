@@ -52,7 +52,7 @@ const AdminScheduleForm = () => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="max-w-md mx-auto bg-white p-6 rounded-xl shadow-md mt-20 space-y-5"
+      className="max-w-md mx-auto bg-transparent p-6 rounded-xl shadow-md mt-20 space-y-5"
     >
       <h2 className="text-2xl font-semibold text-center text-gray-800 mb-2">
         Update Meeting Schedule

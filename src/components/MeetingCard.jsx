@@ -36,7 +36,7 @@ const MeetingCard = ({ item, onUpdate, onComplete }) => {
   return (
     <div
       key={_id}
-      className={`rounded-2xl ${priorityClass} border shadow-lg p-6 transition-all hover:shadow-xl duration-300`}
+      className={`rounded-2xl ${priorityClass} border shadow-lg p-6 transition-all  hover:shadow-xl duration-300`}
     >
       {/* Header */}
       <div className="flex justify-between items-center mb-4">
@@ -77,13 +77,13 @@ const MeetingCard = ({ item, onUpdate, onComplete }) => {
       <div className="mt-6 flex justify-end gap-4">
         <button
           onClick={() => onComplete(_id)}
-          className="bg-green-600 hover:bg-green-700 text-white text-sm px-4 py-2 rounded-lg transition"
+          className="bg-yellow-500 hover:bg-yellow-600 text-black text-sm px-4 py-2 rounded-lg transition"
         >
           Complete
         </button>
         <button
           onClick={() => onUpdate(_id)}
-          className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded-lg transition"
+          className="bg-yellow-500 hover:bg-yellow-600 text-black text-sm px-4 py-2 rounded-lg transition"
         >
           Update
         </button>

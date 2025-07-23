@@ -25,9 +25,8 @@ const AdminDashboard = () => {
   const handleComplete = async (id) => {
     try {
       await completeMeeting({ id, meeting: { isScheduled: 'completed' } }).unwrap();
-      
     } catch (err) {
-      console.error(' Error completing meeting:', err);
+      console.error('Error completing meeting:', err);
     }
   };
 
@@ -41,7 +40,7 @@ const AdminDashboard = () => {
         const matchesSearch =
           item.fullName?.toLowerCase().includes(term) ||
           item.mobileNumber?.toString().includes(term) ||
-          item.reason?.toString().includes(term) ||
+          item.reason?.toLowerCase().includes(term) ||
           item.constituency?.toLowerCase().includes(term);
 
         const matchesFilter =
@@ -56,9 +55,8 @@ const AdminDashboard = () => {
       });
   }, [debouncedSearch, statusFilter, data, isSuccess]);
 
-  // UI Rendering
   if (isLoading) {
-    return <p className="text-center text-gray-500 mt-10">Loading meetings...</p>;
+    return <p className="text-center text-gray-400 mt-10">Loading meetings...</p>;
   }
 
   if (isError) {
@@ -71,43 +69,45 @@ const AdminDashboard = () => {
 
   return (
     <div className="px-4 py-10 max-w-7xl mx-auto">
-      <div className="mb-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-          <h2 className="text-3xl font-bold text-gray-800">Meetings Dashboard</h2>
+      {/* Title */}
+      <h2 className="text-3xl font-bold text-white text-center mb-6">Meetings Dashboard</h2>
 
-          <div className="flex flex-wrap gap-2">
-            {FILTER_OPTIONS.map((status) => (
-              <button
-                key={status}
-                onClick={() => setStatusFilter(status)}
-                className={`px-4 py-1.5 text-sm rounded-3xl font-medium text-white transition-all ${
-                  statusFilter === status
-                    ? 'bg-gray-900 shadow-md'
-                    : 'bg-gray-700 hover:bg-gray-500'
-                }`}
-              >
-                {status}
-              </button>
-            ))}
-          </div>
+      {/* Filter + Search */}
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
+        {/* Filters */}
+        <div className="flex flex-wrap gap-2 justify-center md:justify-start">
+          {FILTER_OPTIONS.map((status) => (
+            <button
+              key={status}
+              onClick={() => setStatusFilter(status)}
+              className={`px-4 py-1.5 text-sm rounded-2xl font-medium transition-all ${
+                statusFilter === status
+                  ? 'bg-yellow-600 text-white shadow-md'
+                  : 'bg-yellow-500 text-black hover:bg-yellow-400'
+              }`}
+            >
+              {status}
+            </button>
+          ))}
         </div>
 
-        <input
-          type="text"
-          aria-label="Search meetings"
-          placeholder="Search name, number, or constituency"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="border border-gray-300 rounded-md px-4 py-2 w-full sm:w-80 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-        />
+        {/* Search */}
+        <div className="w-full  sm:p-0 px-6 md:w-80">
+          <input
+            type="text"
+            placeholder="Search name, number, or constituency"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400 transition"
+          />
+        </div>
       </div>
 
+      {/* Meeting List */}
       {filteredMeetings.length === 0 ? (
-        <p className="text-center text-gray-600 mt-10 text-lg">
-           No meetings found.
-        </p>
+        <p className="text-center text-gray-300 mt-10 text-lg">No meetings found.</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 sm:p-0 px-6 gap-6">
           {filteredMeetings.map((item) => (
             <MeetingCard
               key={item._id}

@@ -42,9 +42,7 @@ const MeetingForm = () => {
       }
     });
 
-    // Phone number validation (must be exactly 10 digits)
-    const phone = formData.mobileNumber.trim();
-    if (!/^\d{10}$/.test(phone)) {
+    if (!/^\d{10}$/.test(formData.mobileNumber.trim())) {
       newErrors.mobileNumber = 'Mobile number must be exactly 10 digits';
     }
 
@@ -103,12 +101,12 @@ const MeetingForm = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8 bg-white rounded-xl shadow-md my-20">
-      <h2 className="text-2xl font-bold mb-6 text-center text-indigo-600">Meeting Request Form</h2>
+    <div className="max-w-3xl mx-auto px-6 py-10 bg-transparent text-white border  backdrop:blur-2xl rounded-xl shadow-lg mt-10 mb-16">
+      <h2 className="text-3xl font-bold mb-8 text-center text-white">Meeting Request Form</h2>
 
       {isError && (
         <p className="text-red-600 text-center mb-4">
-          {error?.data?.message || '❌ Failed to submit request. Please try again.'}
+          {error?.data?.message || ' Failed to submit request. Please try again.'}
         </p>
       )}
 
@@ -116,7 +114,7 @@ const MeetingForm = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {['fullName', 'state', 'homeDistrict', 'constituency'].map((field) => (
             <div key={field}>
-              <label htmlFor={field} className="block font-medium mb-1 capitalize">
+              <label htmlFor={field} className="block text-sm font-medium mb-1 capitalize">
                 {field.replace(/([A-Z])/g, ' $1')}
               </label>
               <input
@@ -125,7 +123,11 @@ const MeetingForm = () => {
                 name={field}
                 value={formData[field]}
                 onChange={handleChange}
-                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                className={`w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 ${
+                  errors[field]
+                    ? 'border-red-400 focus:ring-red-300'
+                    : 'border-slate-300 focus:ring-blue-400'
+                }`}
               />
               {errors[field] && <p className="text-red-500 text-sm mt-1">{errors[field]}</p>}
             </div>
@@ -133,7 +135,7 @@ const MeetingForm = () => {
         </div>
 
         <div>
-          <label htmlFor="mobileNumber" className="block font-medium mb-1">Mobile Number</label>
+          <label htmlFor="mobileNumber" className="block text-sm font-medium mb-1">Mobile Number</label>
           <input
             type="text"
             id="mobileNumber"
@@ -141,53 +143,53 @@ const MeetingForm = () => {
             value={formData.mobileNumber}
             onChange={handleChange}
             maxLength={10}
-            className="w-full border border-gray-300 rounded px-3 py-2"
+            className={`w-full border rounded px-3 py-2 focus:outline-none ${
+              errors.mobileNumber ? 'border-red-400' : 'border-slate-300'
+            }`}
           />
-          {errors.mobileNumber && (
-            <p className="text-red-500 text-sm mt-1">{errors.mobileNumber}</p>
-          )}
+          {errors.mobileNumber && <p className="text-red-500 text-sm mt-1">{errors.mobileNumber}</p>}
         </div>
 
         <div>
-          <label htmlFor="reference" className="block font-medium mb-1">Reference</label>
+          <label htmlFor="reference" className="block text-sm font-medium mb-1">Reference (optional)</label>
           <input
             type="text"
             id="reference"
             name="reference"
             value={formData.reference}
             onChange={handleChange}
-            className="w-full border border-gray-300 rounded px-3 py-2"
+            className="w-full border border-slate-300 rounded px-3 py-2"
           />
         </div>
 
         <div>
-          <label htmlFor="reason" className="block font-medium mb-1">Reason</label>
+          <label htmlFor="reason" className="block text-sm font-medium mb-1">Reason for Meeting</label>
           <textarea
             id="reason"
             name="reason"
             value={formData.reason}
             onChange={handleChange}
             rows={3}
-            className="w-full border border-gray-300 rounded px-3 py-2"
+            className={`w-full border rounded px-3 py-2 focus:outline-none ${
+              errors.reason ? 'border-red-400' : 'border-slate-300'
+            }`}
           />
-          {errors.reason && (
-            <p className="text-red-500 text-sm">{errors.reason}</p>
-          )}
+          {errors.reason && <p className="text-red-500 text-sm">{errors.reason}</p>}
         </div>
 
         <div>
-          <label htmlFor="occupation" className="block font-medium mb-1">Occupation</label>
+          <label htmlFor="occupation" className="block text-sm font-medium mb-1">Occupation</label>
           <input
             type="text"
             id="occupation"
             name="occupation"
             value={formData.occupation}
             onChange={handleChange}
-            className="w-full border border-gray-300 rounded px-3 py-2"
+            className={`w-full border rounded px-3 py-2 focus:outline-none ${
+              errors.occupation ? 'border-red-400' : 'border-slate-300'
+            }`}
           />
-          {errors.occupation && (
-            <p className="text-red-500 text-sm">{errors.occupation}</p>
-          )}
+          {errors.occupation && <p className="text-red-500 text-sm">{errors.occupation}</p>}
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -199,12 +201,13 @@ const MeetingForm = () => {
             'electionHistory',
             'politicalAffiliation',
           ].map((field) => (
-            <label key={field} className="flex items-center gap-2">
+            <label key={field} className="flex items-center gap-2 text-sm">
               <input
                 type="checkbox"
                 name={field}
                 checked={formData[field]}
                 onChange={handleChange}
+                className="accent-blue-600"
               />
               <span className="capitalize">{field.replace(/([A-Z])/g, ' $1')}</span>
             </label>
@@ -212,19 +215,19 @@ const MeetingForm = () => {
         </div>
 
         <div>
-          <label className="block font-medium mb-2">Accompanying Persons</label>
+          <label className="block text-sm font-medium mb-2">Accompanying Persons</label>
           <div className="flex gap-2 mb-3">
             <input
               type="text"
               placeholder="Enter name"
               value={newPerson}
               onChange={(e) => setNewPerson(e.target.value)}
-              className="border border-gray-300 px-3 py-2 rounded w-full"
+              className="border border-slate-300 text-white px-3 py-2 rounded outline-none w-full"
             />
             <button
               type="button"
               onClick={addPerson}
-              className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition"
+              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
             >
               Add
             </button>
@@ -234,7 +237,7 @@ const MeetingForm = () => {
               {formData.accompanyingPersons.map((person, index) => (
                 <li
                   key={index}
-                  className="flex justify-between items-center bg-gray-100 px-4 py-2 rounded"
+                  className="flex justify-between items-center bg-slate-100 px-4 py-2 rounded"
                 >
                   <span>{person}</span>
                   <button
@@ -253,11 +256,11 @@ const MeetingForm = () => {
         <button
           type="submit"
           disabled={isLoading}
-          className={`w-full py-2 rounded text-white font-semibold transition ${
-            isLoading ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'
+          className={`w-full py-3 text-lg font-semibold text-white rounded transition ${
+            isLoading ? 'bg-slate-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'
           }`}
         >
-          {isLoading ? 'Submitting...' : 'Submit Request'}
+          {isLoading ? 'Submitting...' : 'Submit Meeting Request'}
         </button>
       </form>
     </div>

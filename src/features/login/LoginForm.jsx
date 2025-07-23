@@ -60,9 +60,9 @@ const Login = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-[calc(100vh-4rem)]  bg-gray-50 px-4">
-      <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center text-indigo-600 mb-6">
+    <div className="flex items-center justify-center min-h-[calc(100vh-4rem)] text-black px-4">
+      <div className="bg-white border p-8 rounded-xl shadow-md w-full max-w-md">
+        <h2 className="text-2xl font-bold text-center text-blue-600 mb-6">
           Login to Your Account
         </h2>
 
@@ -118,7 +118,7 @@ const Login = () => {
 
         <p className="mt-4 text-sm text-center text-gray-600">
           Don't have an account?{" "}
-          <Link to='/register' className="text-blue-600 cursor-pointer">Register</Link>
+          <span className="text-blue-600 cursor-pointer">Register</span>
         </p>
       </div>
     </div>
