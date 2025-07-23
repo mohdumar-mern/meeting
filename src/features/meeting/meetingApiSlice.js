@@ -29,8 +29,20 @@ export const meetingApiSlice = apiSlice.injectEndpoints({
     }),
 
     updateMeeting: builder.mutation({
-      query: ({ id, ...meeting }) => ({
+      query: ({ id, meeting }) => ({
         url: `/meetings/${id}`,
+        method: "PUT",
+        body: meeting,
+      }),
+      invalidatesTags: (result, error, arg) =>
+        result?.data
+          ? [{ type: "Meeting", id: arg.id }]
+          : [{ type: "Meeting", id: "LIST" }],
+    }),
+
+    completeMeeting: builder.mutation({
+      query: ({ id, meeting }) => ({
+        url: `/meetings/${id}/complete`,
         method: "PATCH",
         body: meeting,
       }),
@@ -46,4 +58,5 @@ export const {
   useGetMeetingsQuery,
   useCreateMeetingMutation,
   useUpdateMeetingMutation,
+  useCompleteMeetingMutation,
 } = meetingApiSlice;

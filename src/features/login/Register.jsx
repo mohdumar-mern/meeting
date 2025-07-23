@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-import { useLoginMutation } from "./loginApiSlice";
+import { useRegisterMutation } from "./loginApiSlice";
 import { Link, useNavigate } from "react-router-dom";
 
-const Login = () => {
+const Register = () => {
   const [form, setForm] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState("");
 
   const navigate = useNavigate();
-  const [login, { isLoading }] = useLoginMutation();
+  const [register, { isLoading }] = useRegisterMutation();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -25,32 +25,16 @@ const Login = () => {
     e.preventDefault();
     setServerError("");
     const validationErrors = validate();
-    if (Object.keys(validationErrors).length) {
+    if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
 
     setErrors({});
-    try {
-      const res = await login(form).unwrap();
-
-      if (res?.token && res?.user) {
-        localStorage.setItem("token", res.token);
-        localStorage.setItem("userId", res.user._id);
-        localStorage.setItem("isAdmin", JSON.stringify(res.user.isAdmin)); // ✅ fix here
-
-        const isAdmin = JSON.parse(localStorage.getItem("isAdmin")); // ✅ parse it properly
-        if (isAdmin) {
-          navigate("/adminDashboard");
-        } else {
-          navigate("/meeting");
-
-        }
-      }
-
-
+    try { await register(form).unwrap();
+    navigate("/login");
     } catch (err) {
-      console.error("Login failed:", err);
+      console.error("Registration failed:", err);
       const message =
         err?.data?.message ||
         err?.error ||
@@ -60,10 +44,10 @@ const Login = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-[calc(100vh-4rem)]  bg-gray-50 px-4">
+    <div className="flex items-center justify-center min-h-[calc(100vh-4rem)] bg-gray-50 px-4">
       <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
         <h2 className="text-2xl font-bold text-center text-indigo-600 mb-6">
-          Login to Your Account
+          Create an Account
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -80,7 +64,7 @@ const Login = () => {
               name="email"
               value={form.email}
               onChange={handleChange}
-              className="mt-1 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="mt-1 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
               placeholder="you@example.com"
               autoComplete="email"
             />
@@ -98,9 +82,9 @@ const Login = () => {
               name="password"
               value={form.password}
               onChange={handleChange}
-              className="mt-1 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="mt-1 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
               placeholder="••••••••"
-              autoComplete="current-password"
+              autoComplete="new-password"
             />
             {errors.password && (
               <p className="text-sm text-red-500 mt-1">{errors.password}</p>
@@ -109,20 +93,22 @@ const Login = () => {
 
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition duration-200 disabled:opacity-50"
+            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-md transition duration-200 disabled:opacity-50"
             disabled={isLoading}
           >
-            {isLoading ? "Logging in..." : "Login"}
+            {isLoading ? "Registering..." : "Register"}
           </button>
         </form>
 
         <p className="mt-4 text-sm text-center text-gray-600">
-          Don't have an account?{" "}
-          <Link to='/register' className="text-blue-600 cursor-pointer">Register</Link>
+          Already have an account?{" "}
+          <Link to="/login" className="text-indigo-600 hover:underline">
+            Login
+          </Link>
         </p>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default Register;
