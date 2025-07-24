@@ -51,6 +51,16 @@ export const meetingApiSlice = apiSlice.injectEndpoints({
           ? [{ type: "Meeting", id: arg.id }]
           : [{ type: "Meeting", id: "LIST" }],
     }),
+    deleteMeeting: builder.mutation({
+      query: (id) => ({
+        url: `/meetings/${id}/delete`,
+        method: "DELETE",
+      }),
+      invalidatesTags: (result, error, arg) =>
+        result?.data
+          ? [{ type: "Meeting", id: arg.id }]
+          : [{ type: "Meeting", id: "LIST" }],
+    }),
   }),
 });
 
@@ -59,4 +69,6 @@ export const {
   useCreateMeetingMutation,
   useUpdateMeetingMutation,
   useCompleteMeetingMutation,
+  useDeleteMeetingMutation,
+
 } = meetingApiSlice;

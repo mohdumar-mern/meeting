@@ -5,6 +5,7 @@ import { Suspense, lazy } from 'react';
 import Register from './features/login/Register';
 import AdminLogin from './features/login/AdminLogin';
 import NotFound from './pages/NotFound';
+import AdminLayout from './features/adminDashboard/AdminLayout';
 
 // Lazy-loaded pages
 const Home = lazy(() => import('./pages/Home'));
@@ -27,14 +28,17 @@ function App() {
 
           {/* Protected Routes */}
           <Route element={<PrivateRoute />}>
-            <Route path="/adminDashboard" element={<AdminDashboard />} />
-              <Route path="/meeting" element={<MeetingForm />} />
+            <Route path="/adminDashboard" element={<AdminLayout />} >
+            <Route index element={<AdminDashboard />} />
+
+            </Route>
+            <Route path="/meeting" element={<MeetingForm />} />
             <Route path="/dashboard/meetings/:id" element={<AdminScheduleForm />} />
 
             {/* Nested User Dashboard */}
-      
+
           </Route>
-            <Route path="*" element={<NotFound />} />
+          <Route path="*" element={<NotFound />} />
 
         </Routes>
       </Suspense>

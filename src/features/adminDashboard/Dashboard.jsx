@@ -1,43 +1,63 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  useGetMeetingsQuery,
-} from '../meeting/meetingApiSlice';
+import { useGetMeetingsQuery, useCompleteMeetingMutation } from '../meeting/meetingApiSlice';
 import useDebounce from '../../hook/debounce';
 import MeetingCard from '../../components/MeetingCard';
+import InputModal from '../../components/Modal';
 
-const FILTER_OPTIONS = ['All', 'scheduled', 'notScheduled', 'completed'];
+const FILTER_OPTIONS = ['All', 'Scheduled', 'NotScheduled', 'Completed'];
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
-  
   const { data = [], isLoading, isError, isSuccess, error } = useGetMeetingsQuery();
+  const [completeMeeting] = useCompleteMeetingMutation();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
+  const [dateFilter, setDateFilter] = useState('');
+  const [showDateInput, setShowDateInput] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedMeetingId, setSelectedMeetingId] = useState(null);
+
   const debouncedSearch = useDebounce(searchTerm, 300);
+  const dropdownRef = useRef(null);
 
-  const handleUpdate = useCallback((id) => {
-    navigate(`/dashboard/meetings/${id}`);
-  }, [navigate]);
+  const handleUpdate = useCallback(
+    (id) => {
+      navigate(`/dashboard/meetings/${id}`);
+    },
+    [navigate]
+  );
 
-//  const handleComplete = async (id) => {
-//   const confirmComplete = window.prompt("Are you sure you want to mark this meeting as completed?");
-  
-//   if (!confirmComplete) return;
+  const handleModalSubmit = async (reason) => {
+    try {
+      const payload = {
+        isScheduled: 'completed',
+        reason,
+      };
+      await completeMeeting({ id: selectedMeetingId, meeting: payload }).unwrap();
+    } catch (err) {
+      console.error('Error completing meeting:', err);
+    } finally {
+      setModalOpen(false);
+      setSelectedMeetingId(null);
+    }
+  };
 
-//   const data = {
-//     meeting: { isScheduled: 'completed', completeMeeting },
-//     c
-  
-//   }
-//   try {
-//     await completeMeeting({ id, meeting: data}).unwrap();
-//   } catch (err) {
-//     console.error('Error completing meeting:', err);
-//   }
-// };
+  const handleComplete = (id) => {
+    setSelectedMeetingId(id);
+    setModalOpen(true);
+  };
 
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setShowDateInput(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const filteredMeetings = useMemo(() => {
     if (!isSuccess || !Array.isArray(data)) return [];
@@ -52,17 +72,23 @@ const AdminDashboard = () => {
           item.reason?.toLowerCase().includes(term) ||
           item.constituency?.toLowerCase().includes(term);
 
-        const matchesFilter =
-          statusFilter === 'All' || item.isScheduled === statusFilter;
+        const matchesStatus =
+          statusFilter === 'All' ||
+          (statusFilter === 'Scheduled' && item.isScheduled === 'scheduled') ||
+          (statusFilter === 'NotScheduled' && item.isScheduled === 'notScheduled') ||
+          (statusFilter === 'Completed' && item.isScheduled === 'completed'); // or use item.isCompleted === true if your schema supports it
 
-        return matchesSearch && matchesFilter;
+        const itemDate = item.arrivalDate?.split('T')[0];
+        const matchesDate = !dateFilter || itemDate === dateFilter;
+
+        return matchesSearch && matchesStatus && matchesDate;
       })
       .sort((a, b) => {
         const aTime = new Date(`${a.arrivalDate}T${a.arrivalTime}`);
         const bTime = new Date(`${b.arrivalDate}T${b.arrivalTime}`);
         return aTime - bTime;
       });
-  }, [debouncedSearch, statusFilter, data, isSuccess]);
+  }, [debouncedSearch, statusFilter, dateFilter, data, isSuccess]);
 
   if (isLoading) {
     return <p className="text-center text-gray-400 mt-10">Loading meetings...</p>;
@@ -78,12 +104,9 @@ const AdminDashboard = () => {
 
   return (
     <div className="px-4 py-10 max-w-7xl mx-auto">
-      {/* Title */}
-      <h2 className="text-3xl font-bold text-white text-center mb-6">Meetings Dashboard</h2>
-
-      {/* Filter + Search */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
-        {/* Filters */}
+      {/* Filters */}
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8 relative">
+        {/* Status Buttons */}
         <div className="flex flex-wrap gap-2 justify-center md:justify-start">
           {FILTER_OPTIONS.map((status) => (
             <button
@@ -100,15 +123,54 @@ const AdminDashboard = () => {
           ))}
         </div>
 
-        {/* Search */}
-        <div className="w-full  sm:p-0 px-6 md:w-80">
-          <input
-            type="text"
-            placeholder="Search name, number, or constituency"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400 transition"
-          />
+        {/* Search + Filter */}
+        <div className="w-full md:w-[350px] relative" ref={dropdownRef}>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              placeholder="Search name, number, or constituency"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400 transition"
+            />
+
+            <button
+              onClick={() => setShowDateInput((prev) => !prev)}
+              className="text-sm text-black font-semibold bg-yellow-500 px-4 py-1.5 rounded hover:bg-yellow-400 transition"
+            >
+              Filter
+            </button>
+          </div>
+
+          {showDateInput && (
+            <div className="absolute right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg p-4 z-10 w-[250px]">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Arrival Date</label>
+              <input
+                type="date"
+                value={dateFilter}
+                onChange={(e) => setDateFilter(e.target.value)}
+                className="w-full border border-gray-300 text-black rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-yellow-400 transition"
+              />
+
+              <div className="flex justify-between mt-3">
+                <button
+                  className="text-xs text-red-500 hover:underline"
+                  onClick={() => {
+                    setDateFilter('');
+                    setShowDateInput(false);
+                  }}
+                >
+                  Clear
+                </button>
+                <button
+                  className="text-xs text-blue-500 hover:underline"
+                  onClick={() => setShowDateInput(false)}
+                >
+                  Apply
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -122,10 +184,19 @@ const AdminDashboard = () => {
               key={item._id}
               item={item}
               onUpdate={handleUpdate}
+              onComplete={() => handleComplete(item._id)}
             />
           ))}
         </div>
       )}
+
+      {/* Modal */}
+      <InputModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSubmit={handleModalSubmit}
+        label="Enter reason to complete this meeting"
+      />
     </div>
   );
 };
