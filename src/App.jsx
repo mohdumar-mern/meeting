@@ -4,6 +4,7 @@ import PrivateRoute from './components/PrivateRoute';
 import { Suspense, lazy } from 'react';
 import Register from './features/login/Register';
 import AdminLogin from './features/login/AdminLogin';
+import NotFound from './pages/NotFound';
 
 // Lazy-loaded pages
 const Home = lazy(() => import('./pages/Home'));
@@ -33,6 +34,8 @@ function App() {
             {/* Nested User Dashboard */}
       
           </Route>
+            <Route path="*" element={<NotFound />} />
+
         </Routes>
       </Suspense>
     </Router>
