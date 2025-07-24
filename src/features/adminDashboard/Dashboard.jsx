@@ -2,7 +2,6 @@ import { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   useGetMeetingsQuery,
-  useCompleteMeetingMutation,
 } from '../meeting/meetingApiSlice';
 import useDebounce from '../../hook/debounce';
 import MeetingCard from '../../components/MeetingCard';
@@ -11,8 +10,8 @@ const FILTER_OPTIONS = ['All', 'scheduled', 'notScheduled', 'completed'];
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
+  
   const { data = [], isLoading, isError, isSuccess, error } = useGetMeetingsQuery();
-  const [completeMeeting] = useCompleteMeetingMutation();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
@@ -22,13 +21,23 @@ const AdminDashboard = () => {
     navigate(`/dashboard/meetings/${id}`);
   }, [navigate]);
 
-  const handleComplete = async (id) => {
-    try {
-      await completeMeeting({ id, meeting: { isScheduled: 'completed' } }).unwrap();
-    } catch (err) {
-      console.error('Error completing meeting:', err);
-    }
-  };
+//  const handleComplete = async (id) => {
+//   const confirmComplete = window.prompt("Are you sure you want to mark this meeting as completed?");
+  
+//   if (!confirmComplete) return;
+
+//   const data = {
+//     meeting: { isScheduled: 'completed', completeMeeting },
+//     c
+  
+//   }
+//   try {
+//     await completeMeeting({ id, meeting: data}).unwrap();
+//   } catch (err) {
+//     console.error('Error completing meeting:', err);
+//   }
+// };
+
 
   const filteredMeetings = useMemo(() => {
     if (!isSuccess || !Array.isArray(data)) return [];
@@ -113,7 +122,6 @@ const AdminDashboard = () => {
               key={item._id}
               item={item}
               onUpdate={handleUpdate}
-              onComplete={handleComplete}
             />
           ))}
         </div>

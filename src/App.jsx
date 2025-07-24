@@ -3,6 +3,7 @@ import Header from './components/Header';
 import PrivateRoute from './components/PrivateRoute';
 import { Suspense, lazy } from 'react';
 import Register from './features/login/Register';
+import AdminLogin from './features/login/AdminLogin';
 
 // Lazy-loaded pages
 const Home = lazy(() => import('./pages/Home'));
@@ -20,6 +21,7 @@ function App() {
           {/* Public Routes */}
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
           {/* <Route path="/register" element={<Register />} /> */}
 
           {/* Protected Routes */}

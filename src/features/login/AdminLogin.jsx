@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-import { useLoginMutation } from "./loginApiSlice";
+import { useAdminLoginMutation } from "./loginApiSlice";
 import { Link, useNavigate } from "react-router-dom";
 
-const Login = () => {
+const AdminLogin = () => {
   const [form, setForm] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState("");
 
   const navigate = useNavigate();
-  const [login, { isLoading }] = useLoginMutation();
+  const [adminLogin, { isLoading }] = useAdminLoginMutation();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -22,7 +22,6 @@ const Login = () => {
   };
 
   const handleSubmit = async (e) => {
-
     e.preventDefault();
     setServerError("");
     const validationErrors = validate();
@@ -33,7 +32,7 @@ const Login = () => {
 
     setErrors({});
     try {
-      const res = await login(form).unwrap();
+      const res = await adminLogin(form).unwrap();
 
       if (res?.token && res?.user) {
         localStorage.setItem("token", res.token);
@@ -48,7 +47,8 @@ const Login = () => {
 
         }
       }
-      setServerError(res.message);
+      setServerError(res.message)
+
 
     } catch (err) {
       console.error("Login failed:", err);
@@ -64,7 +64,7 @@ const Login = () => {
     <div className="flex items-center justify-center min-h-[calc(100vh-4rem)] text-black px-4">
       <div className="bg-white border p-8 rounded-xl shadow-md w-full max-w-md">
         <h2 className="text-2xl font-bold text-center text-blue-600 mb-6">
-          Login to Your Account
+          Adminn Login 
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -126,4 +126,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default AdminLogin;
