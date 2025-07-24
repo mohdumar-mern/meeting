@@ -7,7 +7,7 @@ const Home = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-[calc(100vh-4rem)] bg-transparent px-4 text-center">
       <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4">
-        Welcome to jan Suraaj Meeting Manager!
+        Welcome to Jan Suraaj Meeting Manager!
       </h1>
 
       <p className="text-lg sm:text-xl text-amber-100 mb-8 max-w-xl">

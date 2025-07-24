@@ -48,7 +48,7 @@ const MeetingCard = ({ item, onUpdate, onComplete }) => {
               : 'bg-gray-300 text-gray-800'
           }`}
         >
-          {isScheduled ? 'Scheduled' : 'Pending'}
+          {isScheduled }
         </span>
       </div>
 

@@ -227,7 +227,7 @@ const MeetingForm = () => {
             <button
               type="button"
               onClick={addPerson}
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+              className="bg-[#333] text-white px-4 py-2 rounded hover:bg-[#222] transition"
             >
               Add
             </button>
@@ -237,7 +237,7 @@ const MeetingForm = () => {
               {formData.accompanyingPersons.map((person, index) => (
                 <li
                   key={index}
-                  className="flex justify-between items-center bg-slate-100 px-4 py-2 rounded"
+                  className="flex justify-between items-center bg-slate-100 text-black px-4 py-2 rounded"
                 >
                   <span>{person}</span>
                   <button
@@ -257,7 +257,7 @@ const MeetingForm = () => {
           type="submit"
           disabled={isLoading}
           className={`w-full py-3 text-lg font-semibold text-white rounded transition ${
-            isLoading ? 'bg-slate-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'
+            isLoading ? 'bg-slate-400 cursor-not-allowed' : 'bg-[#333] hover:bg-[#222]'
           }`}
         >
           {isLoading ? 'Submitting...' : 'Submit Meeting Request'}

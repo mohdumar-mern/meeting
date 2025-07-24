@@ -52,9 +52,9 @@ const AdminScheduleForm = () => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="max-w-md mx-auto bg-transparent p-6 rounded-xl shadow-md mt-20 space-y-5"
+      className="max-w-md mx-auto bg-transparent p-6 rounded-xl border shadow-md mt-20 space-y-5"
     >
-      <h2 className="text-2xl font-semibold text-center text-gray-800 mb-2">
+      <h2 className="text-2xl font-semibold text-center text-white mb-2">
         Update Meeting Schedule
       </h2>
 
@@ -74,14 +74,14 @@ const AdminScheduleForm = () => {
           onChange={handleChange}
           className="h-4 w-4"
         />
-        <label htmlFor="isScheduled" className="text-gray-700 font-medium">
+        <label htmlFor="isScheduled" className="text-gray-100 font-medium">
           Schedule Confirmed
         </label>
       </div>
 
       {/* Priority */}
       <div>
-        <label htmlFor="priorityTag" className="block text-gray-700 font-medium mb-1">
+        <label htmlFor="priorityTag" className="block text-gray-100 font-medium mb-1">
           Priority
         </label>
         <select
@@ -89,17 +89,17 @@ const AdminScheduleForm = () => {
           name="priorityTag"
           value={formData.priorityTag}
           onChange={handleChange}
-          className="w-full p-2 border border-gray-300 rounded-md"
+          className="w-full p-2 border border-gray-300  rounded-md"
         >
-          <option value="low">Low</option>
-          <option value="medium">Medium</option>
-          <option value="high">High</option>
+          <option className='text-black' value="low">Low</option>
+          <option className='text-black' value="medium">Medium</option>
+          <option className='text-black' value="high">High</option>
         </select>
       </div>
 
       {/* Arrival Date */}
       <div>
-        <label htmlFor="arrivalDate" className="block text-gray-700 font-medium mb-1">
+        <label htmlFor="arrivalDate" className="block text-gray-100 font-medium mb-1">
           Arrival Date
         </label>
         <input
@@ -108,14 +108,14 @@ const AdminScheduleForm = () => {
           name="arrivalDate"
           value={formData.arrivalDate}
           onChange={handleChange}
-          className="w-full p-2 border border-gray-300 rounded-md"
+          className="w-full p-2 border border-gray-300  rounded-md"
           required
         />
       </div>
 
       {/* Arrival Time */}
       <div>
-        <label htmlFor="arrivalTime" className="block text-gray-700 font-medium mb-1">
+        <label htmlFor="arrivalTime" className="block text-gray-1700 font-medium mb-1">
           Arrival Time
         </label>
         <input
@@ -133,7 +133,7 @@ const AdminScheduleForm = () => {
       <button
         type="submit"
         disabled={isUpdating}
-        className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition disabled:opacity-60"
+        className="w-full bg-[#111] text-white py-2 rounded-md hover:bg-[#000] transition disabled:opacity-60"
       >
         {isUpdating ? 'Updating...' : 'Update Schedule'}
       </button>

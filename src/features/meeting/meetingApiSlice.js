@@ -29,9 +29,9 @@ export const meetingApiSlice = apiSlice.injectEndpoints({
     }),
 
     updateMeeting: builder.mutation({
-      query: ({ id, meeting }) => ({
+      query: ({ id, ...meeting }) => ({
         url: `/meetings/${id}`,
-        method: "PUT",
+        method: "PATCH",
         body: meeting,
       }),
       invalidatesTags: (result, error, arg) =>
