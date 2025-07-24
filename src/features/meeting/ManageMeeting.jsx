@@ -5,12 +5,15 @@ import useDebounce from '../../hook/debounce';
 import MeetingCard from '../../components/MeetingCard';
 import InputModal from '../../components/Modal';
 
-const AdminDashboard = () => {
+const FILTER_OPTIONS = ['All', 'Scheduled', 'NotScheduled', 'Completed'];
+
+const ManageMeeting = () => {
   const navigate = useNavigate();
   const { data = [], isLoading, isError, isSuccess, error } = useGetMeetingsQuery();
   const [completeMeeting] = useCompleteMeetingMutation();
 
   const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('All');
   const [dateFilter, setDateFilter] = useState('');
   const [showDateInput, setShowDateInput] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -28,10 +31,11 @@ const AdminDashboard = () => {
 
   const handleModalSubmit = async (reason) => {
     try {
-      await completeMeeting({
-        id: selectedMeetingId,
-        meeting: { isScheduled: 'completed', reason },
-      }).unwrap();
+      const payload = {
+        isScheduled: 'completed',
+        reason,
+      };
+      await completeMeeting({ id: selectedMeetingId, meeting: payload }).unwrap();
     } catch (err) {
       console.error('Error completing meeting:', err);
     } finally {
@@ -68,18 +72,23 @@ const AdminDashboard = () => {
           item.reason?.toLowerCase().includes(term) ||
           item.constituency?.toLowerCase().includes(term);
 
-         const schedule = item.isScheduled === "scheduled"
+        const matchesStatus =
+          statusFilter === 'All' ||
+          (statusFilter === 'Scheduled' && item.isScheduled === 'scheduled') ||
+          (statusFilter === 'NotScheduled' && item.isScheduled === 'notScheduled') ||
+          (statusFilter === 'Completed' && item.isScheduled === 'completed'); // or use item.isCompleted === true if your schema supports it
+
         const itemDate = item.arrivalDate?.split('T')[0];
         const matchesDate = !dateFilter || itemDate === dateFilter;
 
-        return matchesSearch && matchesDate && schedule;
+        return matchesSearch && matchesStatus && matchesDate;
       })
       .sort((a, b) => {
         const aTime = new Date(`${a.arrivalDate}T${a.arrivalTime}`);
         const bTime = new Date(`${b.arrivalDate}T${b.arrivalTime}`);
         return aTime - bTime;
       });
-  }, [debouncedSearch, dateFilter, data, isSuccess]);
+  }, [debouncedSearch, statusFilter, dateFilter, data, isSuccess]);
 
   if (isLoading) {
     return <p className="text-center text-gray-400 mt-10">Loading meetings...</p>;
@@ -92,12 +101,29 @@ const AdminDashboard = () => {
       </p>
     );
   }
-console.log(filteredMeetings)
+
   return (
     <div className="px-4 py-10 max-w-7xl mx-auto">
+      {/* Filters */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8 relative">
-        <h2 className="text-3xl font-bold">Appointments</h2>
+        {/* Status Buttons */}
+        <div className="flex flex-wrap gap-2 justify-center md:justify-start">
+          {FILTER_OPTIONS.map((status) => (
+            <button
+              key={status}
+              onClick={() => setStatusFilter(status)}
+              className={`px-4 py-1.5 text-sm rounded-2xl font-medium transition-all ${
+                statusFilter === status
+                  ? 'bg-yellow-600 text-white shadow-md'
+                  : 'bg-yellow-500 text-black hover:bg-yellow-400'
+              }`}
+            >
+              {status}
+            </button>
+          ))}
+        </div>
 
+        {/* Search + Filter */}
         <div className="w-full md:w-[350px] relative" ref={dropdownRef}>
           <div className="flex gap-2">
             <input
@@ -107,6 +133,7 @@ console.log(filteredMeetings)
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400 transition"
             />
+
             <button
               onClick={() => setShowDateInput((prev) => !prev)}
               className="text-sm text-black font-semibold bg-yellow-500 px-4 py-1.5 rounded hover:bg-yellow-400 transition"
@@ -124,6 +151,7 @@ console.log(filteredMeetings)
                 onChange={(e) => setDateFilter(e.target.value)}
                 className="w-full border border-gray-300 text-black rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-yellow-400 transition"
               />
+
               <div className="flex justify-between mt-3">
                 <button
                   className="text-xs text-red-500 hover:underline"
@@ -146,6 +174,7 @@ console.log(filteredMeetings)
         </div>
       </div>
 
+      {/* Meeting List */}
       {filteredMeetings.length === 0 ? (
         <p className="text-center text-gray-300 mt-10 text-lg">No meetings found.</p>
       ) : (
@@ -156,12 +185,14 @@ console.log(filteredMeetings)
               item={item}
               onUpdate={handleUpdate}
               onComplete={() => handleComplete(item._id)}
-              apointment={true}
+              apointment={false}
+
             />
           ))}
         </div>
       )}
 
+      {/* Modal */}
       <InputModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
@@ -172,4 +203,4 @@ console.log(filteredMeetings)
   );
 };
 
-export default AdminDashboard;
+export default ManageMeeting;

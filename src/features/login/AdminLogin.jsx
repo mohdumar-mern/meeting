@@ -64,7 +64,7 @@ const AdminLogin = () => {
     <div className="flex items-center justify-center min-h-[calc(100vh-4rem)] text-black px-4">
       <div className="bg-white border p-8 rounded-xl shadow-md w-full max-w-md">
         <h2 className="text-2xl font-bold text-center text-blue-600 mb-6">
-          Adminn Login 
+          Admin Login 
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-5">

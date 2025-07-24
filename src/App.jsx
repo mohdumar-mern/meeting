@@ -6,6 +6,7 @@ import Register from './features/login/Register';
 import AdminLogin from './features/login/AdminLogin';
 import NotFound from './pages/NotFound';
 import AdminLayout from './features/adminDashboard/AdminLayout';
+import ManageMeeting from './features/meeting/ManageMeeting';
 
 // Lazy-loaded pages
 const Home = lazy(() => import('./pages/Home'));
@@ -30,6 +31,8 @@ function App() {
           <Route element={<PrivateRoute />}>
             <Route path="/adminDashboard" element={<AdminLayout />} >
             <Route index element={<AdminDashboard />} />
+            <Route path='apointments' element={<AdminDashboard />} />
+            <Route path='manage-meetings' element={<ManageMeeting />} />
 
             </Route>
             <Route path="/meeting" element={<MeetingForm />} />

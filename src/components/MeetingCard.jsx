@@ -16,7 +16,7 @@ const getPriorityClass = (priority) => {
   }
 };
 
-const MeetingCard = ({ item, onUpdate }) => {
+const MeetingCard = ({ item, onUpdate, apointment }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [completeMeeting] = useCompleteMeetingMutation();
   const [deleteMeeting] = useDeleteMeetingMutation();
@@ -125,7 +125,9 @@ const MeetingCard = ({ item, onUpdate }) => {
       </div>
 
       {/* Footer Actions */}
-      <div className="mt-6 flex flex-col sm:flex-row justify-end gap-4">
+     {
+      !apointment && (
+         <div className="mt-6 flex flex-col sm:flex-row justify-end gap-4">
         {isScheduled !== "completed" && (
           <>
          { isScheduled === 'scheduled' &&    <button
@@ -160,6 +162,8 @@ const MeetingCard = ({ item, onUpdate }) => {
         }
        
       </div>
+      )
+     }
 
       {/* Input Modal */}
       <InputModal
