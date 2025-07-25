@@ -59,14 +59,24 @@ const Header = () => {
             </li>
 
             {!token ? (
- <li className="text-center sm:bg-transparent bg-yellow-500 hover:bg-yello-600 sm:hover:bg-transparent   sm:p-0 p-2 rounded mb-4 duration-300">                <Link
-                  to="/login"
-                  onClick={() => setIsOpen(false)}
-                    className="  text-white px-4 py-2 rounded-md transition w-full sm:w-auto"
-                >
-                  Login
-                </Link>
+              <>
+              <li className="text-center sm:bg-transparent bg-yellow-500 hover:bg-yello-600 sm:hover:bg-transparent   sm:p-0 p-2 rounded mb-4 duration-300">                <Link
+                to="/login"
+                onClick={() => setIsOpen(false)}
+                className="  text-white px-4 py-2 rounded-md transition w-full sm:w-auto"
+              >
+                Login
+              </Link>
               </li>
+              <li className="text-center sm:bg-transparent bg-yellow-500 hover:bg-yello-600 sm:hover:bg-transparent   sm:p-0 p-2 rounded mb-4 duration-300">                <Link
+                to="/admin/login"
+                onClick={() => setIsOpen(false)}
+                className="  text-white px-4 py-2 rounded-md transition w-full sm:w-auto"
+              >Admin Login
+              </Link>
+              </li>
+              </>
+
             ) : (
               <>
                 <li className="text-center hover:bg-yellow-500 sm:hover:bg-transparent sm:p-0 p-2 rounded">

@@ -15,13 +15,13 @@ const InputModal = ({ isOpen, onClose, onSubmit, label }) => {
     <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
       <div className="bg-white p-5 rounded-lg shadow-md w-[90%] max-w-md">
         <h2 className="text-lg font-semibold mb-2">{label}</h2>
-        <input
+        <textarea
           type="text"
           className="border p-2 w-full rounded mb-4"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
-          placeholder="Type here..."
-        />
+          placeholder="Enter Remark..."
+        ></textarea>
         <div className="flex justify-end gap-3">
           <button
             onClick={onClose}

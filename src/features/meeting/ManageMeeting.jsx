@@ -197,7 +197,7 @@ const ManageMeeting = () => {
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
         onSubmit={handleModalSubmit}
-        label="Enter reason to complete this meeting"
+        label="Meeting Remark"
       />
     </div>
   );

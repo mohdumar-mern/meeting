@@ -1,20 +1,20 @@
-import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
+import { useState, useMemo, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useGetMeetingsQuery, useCompleteMeetingMutation } from '../meeting/meetingApiSlice';
+import { useGetMeetingsQuery } from '../meeting/meetingApiSlice';
 import useDebounce from '../../hook/debounce';
 import MeetingCard from '../../components/MeetingCard';
-import InputModal from '../../components/Modal';
+// import InputModal from '../../components/Modal';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const { data = [], isLoading, isError, isSuccess, error } = useGetMeetingsQuery();
-  const [completeMeeting] = useCompleteMeetingMutation();
+  // const [completeMeeting] = useCompleteMeetingMutation();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [dateFilter, setDateFilter] = useState('');
   const [showDateInput, setShowDateInput] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedMeetingId, setSelectedMeetingId] = useState(null);
+  // const [modalOpen, setModalOpen] = useState(false);
+  // const [selectedMeetingId, setSelectedMeetingId] = useState(null);
 
   const debouncedSearch = useDebounce(searchTerm, 300);
   const dropdownRef = useRef(null);
@@ -26,34 +26,34 @@ const AdminDashboard = () => {
     [navigate]
   );
 
-  const handleModalSubmit = async (reason) => {
-    try {
-      await completeMeeting({
-        id: selectedMeetingId,
-        meeting: { isScheduled: 'completed', reason },
-      }).unwrap();
-    } catch (err) {
-      console.error('Error completing meeting:', err);
-    } finally {
-      setModalOpen(false);
-      setSelectedMeetingId(null);
-    }
-  };
+  // const handleModalSubmit = async (reason) => {
+  //   try {
+  //     await completeMeeting({
+  //       id: selectedMeetingId,
+  //       meeting: { isScheduled: 'completed', reason },
+  //     }).unwrap();
+  //   } catch (err) {
+  //     console.error('Error completing meeting:', err);
+  //   } finally {
+  //     setModalOpen(false);
+  //     setSelectedMeetingId(null);
+  //   }
+  // };
 
-  const handleComplete = (id) => {
-    setSelectedMeetingId(id);
-    setModalOpen(true);
-  };
+  // const handleComplete = (id) => {
+  //   setSelectedMeetingId(id);
+  //   setModalOpen(true);
+  // };
 
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setShowDateInput(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  // useEffect(() => {
+  //   const handleClickOutside = (e) => {
+  //     if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+  //       setShowDateInput(false);
+  //     }
+  //   };
+  //   document.addEventListener('mousedown', handleClickOutside);
+  //   return () => document.removeEventListener('mousedown', handleClickOutside);
+  // }, []);
 
   const filteredMeetings = useMemo(() => {
     if (!isSuccess || !Array.isArray(data)) return [];
@@ -155,19 +155,19 @@ console.log(filteredMeetings)
               key={item._id}
               item={item}
               onUpdate={handleUpdate}
-              onComplete={() => handleComplete(item._id)}
+              // onComplete={() => handleComplete(item._id)}
               apointment={true}
             />
           ))}
         </div>
       )}
 
-      <InputModal
+      {/* <InputModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
         onSubmit={handleModalSubmit}
-        label="Enter reason to complete this meeting"
-      />
+        label="Meeting Remark"
+      /> */}
     </div>
   );
 };

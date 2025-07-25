@@ -10,7 +10,7 @@ const AdminScheduleForm = () => {
     isScheduled: false,
     priorityTag: 'low',
     arrivalDate: '',
-    arrivalTime: '',
+    meetingTime: '',
   });
 
   const [updateMeeting, { isLoading: isUpdating }] = useUpdateMeetingMutation();
@@ -29,8 +29,9 @@ const AdminScheduleForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
+    console.log(formData)
 
-    if (!formData.arrivalDate || !formData.arrivalTime) {
+    if (!formData.arrivalDate || !formData.meetingTime) {
       return setError('Please provide both arrival date and time.');
     }
     const data = {...formData, isScheduled: 'scheduled'}
@@ -100,7 +101,7 @@ const AdminScheduleForm = () => {
       {/* Arrival Date */}
       <div>
         <label htmlFor="arrivalDate" className="block text-gray-100 font-medium mb-1">
-          Arrival Date
+          Meeting Date
         </label>
         <input
           type="date"
@@ -115,14 +116,14 @@ const AdminScheduleForm = () => {
 
       {/* Arrival Time */}
       <div>
-        <label htmlFor="arrivalTime" className="block text-gray-1700 font-medium mb-1">
-          Arrival Time
+        <label htmlFor="meetingTime" className="block text-gray-1700 font-medium mb-1">
+          Meeting Time
         </label>
         <input
           type="time"
-          id="arrivalTime"
-          name="arrivalTime"
-          value={formData.arrivalTime}
+          id="meetingTime"
+          name="meetingTime"
+          value={formData.meetingTime}
           onChange={handleChange}
           className="w-full p-2 border border-gray-300 rounded-md"
           required

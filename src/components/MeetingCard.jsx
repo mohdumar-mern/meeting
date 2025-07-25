@@ -6,13 +6,13 @@ import { Trash } from "lucide-react";
 const getPriorityClass = (priority) => {
   switch (priority) {
     case "high":
-      return "bg-red-100 text-red-800 border-red-300";
+      return "bg-red-100 text-red-800 border-red-300 capitalize";
     case "medium":
-      return "bg-yellow-100 text-yellow-800 border-yellow-300";
+      return "bg-yellow-100 text-yellow-800 border-yellow-300 capitalize";
     case "low":
-      return "bg-blue-100 text-blue-800 border-blue-300";
+      return "bg-blue-100 text-blue-800 border-blue-300 capitalize";
     default:
-      return "bg-gray-100 text-gray-800 border-gray-300";
+      return "bg-gray-100 text-gray-800 border-gray-300 capitalize";
   }
 };
 
@@ -76,61 +76,121 @@ const MeetingCard = ({ item, onUpdate, apointment }) => {
   const priorityClass = getPriorityClass(priorityTag);
 
   return (
-    <div className={`rounded-2xl ${priorityClass} border shadow-lg p-6 transition-all hover:shadow-xl duration-300`}>
-      {/* Header */}
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-xl font-bold text-gray-900">{fullName}</h3>
-        <span className={`text-xs px-3 py-1 rounded-full font-medium ${
-          isScheduled === "completed" ? "bg-green-200 text-green-800" : "bg-gray-300 text-gray-800"
-        }`}>
-          {isScheduled}
-        </span>
-      </div>
+  <div className={`overflow-x-auto rounded-2xl border shadow-lg p-6 transition-all hover:shadow-xl duration-300 ${priorityClass}`}>
+  <table className="min-w-full table-auto text-sm text-left text-gray-800">
+    <thead>
+      <tr className="text-gray-900 font-bold text-base border-b">
+        <th colSpan="2" className="pb-4">
+          <div className="flex justify-between items-center">
+            <span>{fullName}</span>
+            <span
+              className={`text-xs px-3 py-1 rounded-full font-medium ${
+                isScheduled === "completed"
+                  ? "bg-green-200 text-green-800"
+                  : "bg-gray-300 text-gray-800"
+              }`}
+            >
+              {isScheduled}
+            </span>
+          </div>
+        </th>
+      </tr>
+    </thead>
 
-      {/* Info Grid */}
-      <div className="gap-x-4 gap-y-2 text-sm text-gray-800">
-        {isScheduled === "completed" ? (
-          <>
-            <p><strong>Message:</strong> {message}</p>
-            <p><strong>Mobile:</strong> {mobileNumber}</p>
-            <p><strong>Arrival:</strong> {arrivalDate ? new Date(arrivalDate).toLocaleDateString() : "N/A"} {arrivalTime}</p>
-            <p>
-              <strong>Priority:</strong>{" "}
+    <tbody>
+      {isScheduled === "completed" ? (
+        <>
+          <tr>
+            <td className="font-bold py-2 pr-4">Message:</td>
+            <td className="py-2">{message}</td>
+          </tr>
+          <tr>
+            <td className="font-bold py-2 pr-4">Mobile:</td>
+            <td className="py-2">{mobileNumber}</td>
+          </tr>
+          <tr>
+            <td className="font-bold py-2 pr-4">Arrival:</td>
+            <td className="py-2">
+              {arrivalDate ? new Date(arrivalDate).toLocaleDateString() : "N/A"} {arrivalTime}
+            </td>
+          </tr>
+          <tr>
+            <td className="font-bold py-2 pr-4">Priority:</td>
+            <td className="py-2">
               <span className={`inline-block px-2 py-0.5 rounded text-xs font-bold ${priorityClass}`}>
                 {priorityTag || "Normal"}
               </span>
-            </p>
-          </>
-        ) : (
-          <>
-            <p className="font-medium"><strong className="text-lg">Reason:</strong> {reason}</p>
-            <p>
-              <strong>Priority:</strong>{" "}
+            </td>
+          </tr>
+        </>
+      ) : (
+        <>
+          <tr>
+            <td className="font-bold py-2 pr-4">Reason:</td>
+            <td className="py-2">{reason}</td>
+          </tr>
+          <tr>
+            <td className="font-bold py-2 pr-4">Priority:</td>
+            <td className="py-2">
               <span className={`inline-block px-2 py-0.5 rounded text-xs font-bold ${priorityClass}`}>
                 {priorityTag || "Normal"}
               </span>
-            </p>
-            <p><strong>Mobile:</strong> {mobileNumber}</p>
-            <p><strong>Meeting Time:</strong> {arrivalDate ? new Date(arrivalDate).toLocaleDateString() : "N/A"} {arrivalTime}</p>
-            <p><strong>State:</strong> {state}</p>
-            <p><strong>District:</strong> {homeDistrict}</p>
-            <p><strong>Constituency:</strong> {constituency}</p>
-            <p><strong>Reference:</strong> {reference}</p>
-            <p><strong>Occupation:</strong> {occupation}</p>
-            <p><strong>Political Exp.:</strong> {politicalExperience ? "Yes" : "No"}</p>
-            <p><strong>Political Affiliation:</strong> {politicalAffiliation ? "Yes" : "No"}</p>
-            <p><strong>Election History:</strong> {electionHistory ? "Yes" : "No"}</p>
-          </>
-        )}
-      </div>
+            </td>
+          </tr>
+          <tr>
+            <td className="font-bold py-2 pr-4">Mobile:</td>
+            <td className="py-2">{mobileNumber}</td>
+          </tr>
+          <tr>
+            <td className="font-bold py-2 pr-4">Meeting Time:</td>
+            <td className="py-2">
+              {arrivalDate ? new Date(arrivalDate).toLocaleDateString() : "N/A"} {arrivalTime}
+            </td>
+          </tr>
+          <tr>
+            <td className="font-bold py-2 pr-4">State:</td>
+            <td className="py-2">{state}</td>
+          </tr>
+          <tr>
+            <td className="font-bold py-2 pr-4">District:</td>
+            <td className="py-2">{homeDistrict}</td>
+          </tr>
+          <tr>
+            <td className="font-bold py-2 pr-4">Constituency:</td>
+            <td className="py-2">{constituency}</td>
+          </tr>
+          <tr>
+            <td className="font-bold py-2 pr-4">Reference:</td>
+            <td className="py-2">{reference}</td>
+          </tr>
+          <tr>
+            <td className="font-bold py-2 pr-4">Occupation:</td>
+            <td className="py-2">{occupation}</td>
+          </tr>
+          <tr>
+            <td className="font-bold py-2 pr-4">Political Exp.:</td>
+            <td className="py-2">{politicalExperience ? "Yes" : "No"}</td>
+          </tr>
+          <tr>
+            <td className="font-bold py-2 pr-4">Political Affiliation:</td>
+            <td className="py-2">{politicalAffiliation ? "Yes" : "No"}</td>
+          </tr>
+          <tr>
+            <td className="font-bold py-2 pr-4">Election History:</td>
+            <td className="py-2">{electionHistory ? "Yes" : "No"}</td>
+          </tr>
+        </>
+      )}
+    </tbody>
+  </table>
 
-      {/* Footer Actions */}
-     {
-      !apointment && (
-         <div className="mt-6 flex flex-col sm:flex-row justify-end gap-4">
-        {isScheduled !== "completed" && (
-          <>
-         { isScheduled === 'scheduled' &&    <button
+  {/* Footer Buttons */}
+  {!apointment && (
+    <div className="mt-6 flex flex-col sm:flex-row justify-end gap-4">
+      {isScheduled !== "completed" && (
+        <>
+          {isScheduled === "scheduled" && (
+            <button
               onClick={() => {
                 setSelectedId(_id);
                 setModalOpen(true);
@@ -138,41 +198,36 @@ const MeetingCard = ({ item, onUpdate, apointment }) => {
               className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
             >
               Meeting Remark
-            </button>}
-            <button
-              onClick={() => onUpdate(_id)}
-              className="bg-yellow-500 hover:bg-yellow-600 text-black text-sm px-4 py-2 rounded transition"
-            >
-              {isScheduled === "scheduled" ? "Re Schedule" : "Schedule"}
             </button>
-
-           
-
-          </>
-        )}
-          {
-          isScheduled === "completed" &&(
-            <button
-              onClick={() => handleDelete(_id)}
-              className="bg-red-500 hover:bg-red-600 text-white text-sm px-4 py-2 rounded transition flex items-center justify-center gap-1"
-            >
-              <Trash size={16} /> Delete
-            </button>
-          )
-        }
-       
-      </div>
-      )
-     }
-
-      {/* Input Modal */}
-      <InputModal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        onSubmit={handleInputSubmit}
-        label="Enter reason for completion"
-      />
+          )}
+          <button
+            onClick={() => onUpdate(_id)}
+            className="bg-yellow-500 hover:bg-yellow-600 text-black text-sm px-4 py-2 rounded transition"
+          >
+            {isScheduled === "scheduled" ? "Re Schedule" : "Schedule"}
+          </button>
+        </>
+      )}
+      {isScheduled === "completed" && (
+        <button
+          onClick={() => handleDelete(_id)}
+          className="bg-red-500 hover:bg-red-600 text-white text-sm px-4 py-2 rounded transition flex items-center justify-center gap-1"
+        >
+          <Trash size={16} /> Delete
+        </button>
+      )}
     </div>
+  )}
+
+  {/* Modal */}
+  <InputModal
+    isOpen={modalOpen}
+    onClose={() => setModalOpen(false)}
+    onSubmit={handleInputSubmit}
+    label="Enter reason for completion"
+  />
+</div>
+
   );
 };
 

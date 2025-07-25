@@ -39,10 +39,16 @@ function App() {
           {/* Protected Routes */}
           <Route element={<PrivateRoute />}>
             <Route path="/adminDashboard" element={<AdminLayout />}>
-              <Route index element={<AdminDashboard />} />
+              <Route index element={<Navigate to="apointments" replace />} />
               <Route path="apointments" element={<AdminDashboard />} />
               <Route path="manage-meetings" element={<ManageMeeting />} />
             </Route>
+
+            {/* <Route path="/adminDashboard" element={<AdminLayout />}>
+              <Route index element={<AdminDashboard />} />
+              <Route path="apointments" element={<AdminDashboard />} />
+              <Route path="manage-meetings" element={<ManageMeeting />} />
+            </Route> */}
 
             <Route path="/meeting" element={<MeetingForm />} />
             <Route path="/dashboard/meetings/:id" element={<AdminScheduleForm />} />
