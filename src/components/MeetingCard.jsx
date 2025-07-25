@@ -224,7 +224,7 @@ const MeetingCard = ({ item, onUpdate, apointment }) => {
     isOpen={modalOpen}
     onClose={() => setModalOpen(false)}
     onSubmit={handleInputSubmit}
-    label="Enter reason for completion"
+    label="Meeting Remark"
   />
 </div>
 

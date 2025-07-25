@@ -1,23 +1,22 @@
 import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useGetMeetingsQuery, useCompleteMeetingMutation } from '../meeting/meetingApiSlice';
+import { useGetMeetingsQuery } from '../meeting/meetingApiSlice';
 import useDebounce from '../../hook/debounce';
 import MeetingCard from '../../components/MeetingCard';
-import InputModal from '../../components/Modal';
+// import InputModal from '../../components/Modal';
 
 const FILTER_OPTIONS = ['All', 'Scheduled', 'NotScheduled', 'Completed'];
 
 const ManageMeeting = () => {
   const navigate = useNavigate();
   const { data = [], isLoading, isError, isSuccess, error } = useGetMeetingsQuery();
-  const [completeMeeting] = useCompleteMeetingMutation();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
   const [dateFilter, setDateFilter] = useState('');
   const [showDateInput, setShowDateInput] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedMeetingId, setSelectedMeetingId] = useState(null);
+  // const [modalOpen, setModalOpen] = useState(false);
+  // const [selectedMeetingId, setSelectedMeetingId] = useState(null);
 
   const debouncedSearch = useDebounce(searchTerm, 300);
   const dropdownRef = useRef(null);
@@ -29,25 +28,25 @@ const ManageMeeting = () => {
     [navigate]
   );
 
-  const handleModalSubmit = async (reason) => {
-    try {
-      const payload = {
-        isScheduled: 'completed',
-        reason,
-      };
-      await completeMeeting({ id: selectedMeetingId, meeting: payload }).unwrap();
-    } catch (err) {
-      console.error('Error completing meeting:', err);
-    } finally {
-      setModalOpen(false);
-      setSelectedMeetingId(null);
-    }
-  };
+  // const handleModalSubmit = async (reason) => {
+  //   try {
+  //     const payload = {
+  //       isScheduled: 'completed',
+  //       reason,
+  //     };
+  //     await completeMeeting({ id: selectedMeetingId, meeting: payload }).unwrap();
+  //   } catch (err) {
+  //     console.error('Error completing meeting:', err);
+  //   } finally {
+  //     setModalOpen(false);
+  //     setSelectedMeetingId(null);
+  //   }
+  // };
 
-  const handleComplete = (id) => {
-    setSelectedMeetingId(id);
-    setModalOpen(true);
-  };
+  // const handleComplete = (id) => {
+  //   setSelectedMeetingId(id);
+  //   setModalOpen(true);
+  // };
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -184,7 +183,7 @@ const ManageMeeting = () => {
               key={item._id}
               item={item}
               onUpdate={handleUpdate}
-              onComplete={() => handleComplete(item._id)}
+              // onComplete={() => handleComplete(item._id)}
               apointment={false}
 
             />
@@ -193,12 +192,12 @@ const ManageMeeting = () => {
       )}
 
       {/* Modal */}
-      <InputModal
+      {/* <InputModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
         onSubmit={handleModalSubmit}
         label="Meeting Remark"
-      />
+      /> */}
     </div>
   );
 };

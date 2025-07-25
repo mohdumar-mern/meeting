@@ -7,7 +7,7 @@ import NotFound from './pages/NotFound';
 import AdminLayout from './features/adminDashboard/AdminLayout';
 import ManageMeeting from './features/meeting/ManageMeeting';
 
-// Lazy-loaded pages
+// Lazy-loaded components
 const Home = lazy(() => import('./pages/Home'));
 const Login = lazy(() => import('./features/login/LoginForm'));
 const MeetingForm = lazy(() => import('./features/meeting/MeetingForm'));
@@ -16,45 +16,35 @@ const AdminScheduleForm = lazy(() => import('./components/SchedularForm'));
 
 function App() {
   const token = localStorage.getItem('token');
-  const isAdmin = localStorage.getItem('isAdmin') === 'true'; // make sure it's a boolean
+  const isAdmin = localStorage.getItem('isAdmin') === 'true';
 
   return (
     <Router>
       <Header />
       <Suspense fallback={<div className="text-center mt-10">Loading...</div>}>
         <Routes>
-          {/* Redirect if admin */}
-
-          <Route path="/" element={<Home />} />
-
           {/* Public Routes */}
+          <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route
             path="/admin/login"
-            element={
-              token && isAdmin ? <Navigate to="/adminDashboard" replace /> : <AdminLogin />
-            }
+            element={token && isAdmin ? <Navigate to="/adminDashboard" replace /> : <AdminLogin />}
           />
 
           {/* Protected Routes */}
           <Route element={<PrivateRoute />}>
             <Route path="/adminDashboard" element={<AdminLayout />}>
-              <Route index element={<Navigate to="apointments" replace />} />
-              <Route path="apointments" element={<AdminDashboard />} />
+              {/* Redirect default to appointments */}
+              <Route index element={<Navigate to="appointments" replace />} />
+              <Route path="appointments" element={<AdminDashboard />} />
               <Route path="manage-meetings" element={<ManageMeeting />} />
             </Route>
-
-            {/* <Route path="/adminDashboard" element={<AdminLayout />}>
-              <Route index element={<AdminDashboard />} />
-              <Route path="apointments" element={<AdminDashboard />} />
-              <Route path="manage-meetings" element={<ManageMeeting />} />
-            </Route> */}
 
             <Route path="/meeting" element={<MeetingForm />} />
             <Route path="/dashboard/meetings/:id" element={<AdminScheduleForm />} />
           </Route>
 
-          {/* 404 */}
+          {/* 404 Not Found */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>

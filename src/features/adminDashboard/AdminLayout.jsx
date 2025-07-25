@@ -16,16 +16,24 @@ const AdminLayout = () => {
       {/* Tab Navigation */}
       <div className="flex justify-center mb-8 border-b border-gray-600">
         <Link
-          to="/adminDashboard/apointments"
+          to="/adminDashboard/appointments"
           className={clsx(
             'px-4 py-2 text-sm font-semibold transition',
-            isActive('/adminDashboard/apointments')
+            isActive('/adminDashboard/appointments')
               ? 'text-yellow-500 border-b-2 border-yellow-500'
               : 'text-gray-400 hover:text-yellow-400'
           )}
         >
           Appointments
         </Link>
+{/* <Link
+  to="/adminDashboard/appointments"
+  className={`${
+    isActive('/adminDashboard/appointments') ? 'bg-yellow-600' : 'bg-gray-700'
+  } text-white px-4 py-2 rounded hover:bg-yellow-700 transition`}
+>
+  Appointment
+</Link> */}
 
         <Link
           to="/adminDashboard/manage-meetings"
