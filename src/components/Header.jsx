@@ -30,7 +30,7 @@ const Header = () => {
           to="/"
           className=" sm:text-2xl font-bold flex items-center gap-2 hover:text-blue-400 transition duration-200"
         >
-          <img src="/logo.png" alt="Meeting Schedula" className='w-32 h-12' />
+          <img src="/logo.png" alt="Meeting Schedula" className='w-12 h-12' />
         </Link>
 
         {/* Hamburger Icon */}

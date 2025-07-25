@@ -178,7 +178,7 @@ const ManageMeeting = () => {
       {filteredMeetings.length === 0 ? (
         <p className="text-center text-gray-300 mt-10 text-lg">No meetings found.</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 sm:p-0 px-6 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 sm:p-0  gap-6">
           {filteredMeetings.map((item) => (
             <MeetingCard
               key={item._id}
