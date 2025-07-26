@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useCompleteMeetingMutation, useDeleteMeetingMutation } from "../features/meeting/meetingApiSlice";
 import InputModal from "./Modal";
-import { Trash } from "lucide-react";
+import { MoreHorizontal, MoreVertical, Trash } from "lucide-react";
 
 const getPriorityClass = (priority) => {
   switch (priority) {
@@ -21,6 +21,8 @@ const MeetingCard = ({ item, onUpdate, apointment }) => {
   const [completeMeeting] = useCompleteMeetingMutation();
   const [deleteMeeting] = useDeleteMeetingMutation();
   const [selectedId, setSelectedId] = useState(null);
+  const [showActions, setShowActions] = useState(false);
+  
 
   const handleInputSubmit = async (inputValue) => {
     const data = {
@@ -76,22 +78,83 @@ const MeetingCard = ({ item, onUpdate, apointment }) => {
   const priorityClass = getPriorityClass(priorityTag);
 
   return (
-  <div className={`overflow-x-auto rounded-2xl border shadow-lg p-6 transition-all hover:shadow-xl duration-300 ${priorityClass}`}>
+  <div
+  className={`overflow-x-auto rounded-2xl border shadow-lg p-6 transition-all hover:shadow-xl duration-300 ${priorityClass}`}
+>
   <table className="min-w-full table-auto text-sm text-left text-gray-800">
     <thead>
       <tr className="text-gray-900 font-bold text-base border-b">
         <th colSpan="2" className="pb-4">
-          <div className="flex justify-between items-center">
-            <span>{fullName}</span>
-            <span
-              className={`text-xs px-3 py-1 rounded-full font-medium ${
-                isScheduled === "completed"
-                  ? "bg-green-200 text-green-800"
-                  : "bg-gray-300 text-gray-800"
-              }`}
-            >
-              {isScheduled}
-            </span>
+          <div className="flex justify-between items-start">
+            <div className="flex flex-col">
+              <span>{fullName}</span>
+              <span
+                className={`mt-1 text-xs px-3 py-1 rounded-full font-medium inline-block w-fit ${
+                  isScheduled === "completed"
+                    ? "bg-green-200 text-green-800"
+                    : "bg-gray-300 text-gray-800"
+                }`}
+              >
+                {isScheduled}
+              </span>
+            </div>
+
+            {/* 3-Dot Menu */}
+            {!apointment && (
+              <div className="relative">
+                <button
+                  onClick={() => setShowActions((prev) => !prev)}
+                  className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300"
+                >
+                  <MoreVertical size={20} />
+                </button>
+
+                {showActions && (
+                  <div className="absolute z-10 mt-2 right-0 w-max bg-white border rounded shadow-lg p-3 flex flex-col gap-2 min-w-[150px]">
+                    {isScheduled !== "completed" && (
+                      <>
+                        {isScheduled === "scheduled" && (
+                          <button
+                            onClick={() => {
+                              setSelectedId(_id);
+                              setModalOpen(true);
+                              setShowActions(false);
+                            }}
+                            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-sm"
+                          >
+                            Meeting Remark
+                          </button>
+                        )}
+
+                        <button
+                          onClick={() => {
+                            onUpdate(_id);
+                            setShowActions(false);
+                          }}
+                          className="bg-yellow-500 hover:bg-yellow-600 text-black text-sm px-4 py-2 rounded"
+                        >
+                          {isScheduled === "scheduled"
+                            ? "Re Schedule"
+                            : "Schedule"}
+                        </button>
+                      </>
+                    )}
+
+                    {isScheduled === "completed" && (
+                      <button
+                        onClick={() => {
+                          handleDelete(_id);
+                          setShowActions(false);
+                        }}
+                        className="bg-red-500 hover:bg-red-600 text-white text-sm px-4 py-2 rounded flex items-center justify-center gap-1"
+                      >
+                        <Trash size={16} /> Delete
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </th>
       </tr>
@@ -101,7 +164,7 @@ const MeetingCard = ({ item, onUpdate, apointment }) => {
       {isScheduled === "completed" ? (
         <>
           <tr>
-            <td className="font-bold py-2 pr-4">Message:</td>
+            <td className="font-bold py-2 pr-4">Meeting Remark:</td>
             <td className="py-2">{message}</td>
           </tr>
           <tr>
@@ -109,15 +172,20 @@ const MeetingCard = ({ item, onUpdate, apointment }) => {
             <td className="py-2">{mobileNumber}</td>
           </tr>
           <tr>
-            <td className="font-bold py-2 pr-4">Arrival:</td>
+            <td className="font-bold py-2 pr-4">Meeting Time:</td>
             <td className="py-2">
-              {arrivalDate ? new Date(arrivalDate).toLocaleDateString() : "N/A"} {arrivalTime}
+              {arrivalDate
+                ? new Date(arrivalDate).toLocaleDateString()
+                : "N/A"}{" "}
+              {arrivalTime}
             </td>
           </tr>
           <tr>
             <td className="font-bold py-2 pr-4">Priority:</td>
             <td className="py-2">
-              <span className={`inline-block px-2 py-0.5 rounded text-xs font-bold ${priorityClass}`}>
+              <span
+                className={`inline-block px-2 py-0.5 rounded text-xs font-bold ${priorityClass}`}
+              >
                 {priorityTag || "Normal"}
               </span>
             </td>
@@ -132,7 +200,9 @@ const MeetingCard = ({ item, onUpdate, apointment }) => {
           <tr>
             <td className="font-bold py-2 pr-4">Priority:</td>
             <td className="py-2">
-              <span className={`inline-block px-2 py-0.5 rounded text-xs font-bold ${priorityClass}`}>
+              <span
+                className={`inline-block px-2 py-0.5 rounded text-xs font-bold ${priorityClass}`}
+              >
                 {priorityTag || "Normal"}
               </span>
             </td>
@@ -144,7 +214,10 @@ const MeetingCard = ({ item, onUpdate, apointment }) => {
           <tr>
             <td className="font-bold py-2 pr-4">Meeting Time:</td>
             <td className="py-2">
-              {arrivalDate ? new Date(arrivalDate).toLocaleDateString() : "N/A"} {arrivalTime}
+              {arrivalDate
+                ? new Date(arrivalDate).toLocaleDateString()
+                : "N/A"}{" "}
+              {arrivalTime}
             </td>
           </tr>
           <tr>
@@ -184,41 +257,6 @@ const MeetingCard = ({ item, onUpdate, apointment }) => {
     </tbody>
   </table>
 
-  {/* Footer Buttons */}
-  {!apointment && (
-    <div className="mt-6 flex flex-col sm:flex-row justify-end gap-4">
-      {isScheduled !== "completed" && (
-        <>
-          {isScheduled === "scheduled" && (
-            <button
-              onClick={() => {
-                setSelectedId(_id);
-                setModalOpen(true);
-              }}
-              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-            >
-              Meeting Remark
-            </button>
-          )}
-          <button
-            onClick={() => onUpdate(_id)}
-            className="bg-yellow-500 hover:bg-yellow-600 text-black text-sm px-4 py-2 rounded transition"
-          >
-            {isScheduled === "scheduled" ? "Re Schedule" : "Schedule"}
-          </button>
-        </>
-      )}
-      {isScheduled === "completed" && (
-        <button
-          onClick={() => handleDelete(_id)}
-          className="bg-red-500 hover:bg-red-600 text-white text-sm px-4 py-2 rounded transition flex items-center justify-center gap-1"
-        >
-          <Trash size={16} /> Delete
-        </button>
-      )}
-    </div>
-  )}
-
   {/* Modal */}
   <InputModal
     isOpen={modalOpen}
@@ -227,6 +265,7 @@ const MeetingCard = ({ item, onUpdate, apointment }) => {
     label="Meeting Remark"
   />
 </div>
+
 
   );
 };

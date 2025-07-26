@@ -94,7 +94,7 @@ const AdminDashboard = () => {
   }
 console.log(filteredMeetings)
   return (
-    <div className="px-4 py-10 max-w-7xl mx-auto">
+    <div className="  max-w-7xl mx-auto">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8 relative">
         <h2 className="text-3xl font-bold">Appointments</h2>
 
@@ -156,7 +156,7 @@ console.log(filteredMeetings)
               item={item}
               onUpdate={handleUpdate}
               // onComplete={() => handleComplete(item._id)}
-              apointment={true}
+              apointment={false}
             />
           ))}
         </div>

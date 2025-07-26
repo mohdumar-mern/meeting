@@ -102,7 +102,7 @@ const ManageMeeting = () => {
   }
 
   return (
-    <div className="px-4 py-10 max-w-7xl mx-auto">
+    <div className=" py-10 max-w-7xl mx-auto">
       {/* Filters */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8 relative">
         {/* Status Buttons */}
